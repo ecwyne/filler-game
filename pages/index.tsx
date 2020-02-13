@@ -61,10 +61,12 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                 value={strength}
                 onChange={e => setStrength(Number(e.target.value))}
             >
+                <option value={1}>AI Strength: 1</option>
                 <option value={2}>AI Strength: 2</option>
                 <option value={4}>AI Strength: 4</option>
                 <option value={6}>AI Strength: 6</option>
                 <option value={8}>AI Strength: 8</option>
+                <option value={10}>AI Strength: 10</option>
             </select>
             {/* 
             
@@ -102,10 +104,7 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                 <button
                     style={{ width: '50px', height: '50px' }}
                     onClick={() =>
-                        update(prev => {
-                            const choice = compute(strength, prev);
-                            return choice.node || prev;
-                        })
+                        update(prev => compute(strength, prev).node || prev)
                     }
                 >
                     AI
@@ -137,7 +136,7 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
             </div>
             <div className={styles.spaced}>
                 <button
-                    onClick={() => location.reload()}
+                    onClick={() => update(Game.generate().state)}
                     style={{ fontSize: '20px', borderRadius: '10%' }}
                 >
                     Shuffle
