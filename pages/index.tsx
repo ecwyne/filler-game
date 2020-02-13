@@ -2,86 +2,78 @@ import React, { useState, useEffect } from 'react';
 import { NextPage } from 'next';
 import { GameState, colors, ColorKey, Game, columns } from '../lib/Game';
 import { compute } from '../lib/ai';
+import styles from '../lib/board.module.css';
+import clsx from 'clsx';
 
 export const Board: React.FC<{
     board: GameState['board'];
     update: React.Dispatch<React.SetStateAction<GameState>>;
     disabled: ColorKey[];
     state: GameState;
-}> = ({ board, update, disabled }) => {
+}> = ({ board, update, disabled, state }) => {
+    typeof document !== 'undefined' &&
+        document.documentElement.style.setProperty(
+            '--colNum',
+            columns.toString(),
+        );
     return (
-        <div>
-            {(board.split('') as ColorKey[]).map((c, i) => (
-                <React.Fragment key={i}>
+        <div className={styles.board}>
+            {(board.split('') as ColorKey[]).map((c, i) => {
+                const isPlayer = [...state.player1, ...state.player2].includes(
+                    i,
+                );
+                const size =
+                    !isPlayer && disabled.includes(c) ? '10px' : '30px';
+                return (
                     <div
+                        key={i}
                         onClick={() =>
-                            !disabled.includes(c)
+                            state.currentPlayer === 1 && !disabled.includes(c)
                                 ? update(prev => new Game(prev).playTurn(c))
                                 : null
                         }
-                        style={{
-                            cursor: disabled.includes(c)
-                                ? 'initial'
-                                : 'pointer',
-                            border: '2px solid black',
-                            display: 'inline-block',
-                            width: '30px',
-                            height: '30px',
-                            backgroundColor: colors[c],
-                        }}
-                    />
-                    {i % columns === columns - 1 ? <div /> : null}
-                </React.Fragment>
-            ))}
+                        className={clsx([
+                            styles.cell,
+                            styles[c],
+                            disabled.includes(c)
+                                ? styles.disabled
+                                : styles.enabled,
+                        ])}
+                    ></div>
+                );
+            })}
         </div>
     );
 };
 const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
     const [state, update] = useState<GameState>(initialState);
-    const [turn, setTurn] = useState(0);
-    const [strength, setStrength] = useState(6);
-    const [ai, setAI] = useState(0);
-
-    console.log(state);
+    const [strength, setStrength] = useState(8);
     useEffect(() => {
-        setTurn(prev => prev + 1);
         if (state.currentPlayer === 2) {
-            update(prev => {
-                const choice = compute(strength, prev);
-                console.log(choice);
-                setAI(choice.value);
-                return choice.node || prev;
-            });
+            update(prev => compute(strength, prev).node || prev);
         }
     }, [state]);
 
     const disabled = [state.player1Color, state.player2Color];
     return (
-        <div>
-            <input
+        <div className={styles.container}>
+            <select
+                value={strength}
+                onChange={e => setStrength(Number(e.target.value))}
+            >
+                <option value={2}>AI Strength: 2</option>
+                <option value={4}>AI Strength: 4</option>
+                <option value={6}>AI Strength: 6</option>
+                <option value={8}>AI Strength: 8</option>
+            </select>
+            {/* <input
                 type="number"
                 value={strength}
                 onChange={e => setStrength(Number(e.target.value))}
             />
-            <br />
-            Turn: {turn}
-            <br />
-            Current Player:
-            <input
-                type="number"
-                value={state.currentPlayer}
-                onChange={e => {
-                    const n = Number(e.target.value) as 1;
-                    update(prev => ({
-                        ...prev,
-                        currentPlayer: n,
-                    }));
-                }}
-            />
-            <br />
-            AI Confidence: {ai}
-            <br />
+            
             <textarea
+                rows={5}
                 value={state.board}
                 onChange={e => {
                     const board = e.target.value;
@@ -90,32 +82,27 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                         board,
                     }));
                 }}
-            />
-            <br />
-            <span
-                style={{
-                    padding: '5px',
-                    backgroundColor: colors[state.player1Color],
-                }}
-            >
-                {state.player1.length}
-            </span>
-            -
-            <span
-                style={{
-                    padding: '5px',
-                    backgroundColor: colors[state.player2Color],
-                }}
-            >
-                {state.player2.length}
-            </span>
+            /> */}
+            <div>
+                <span
+                    className={clsx([styles.score, styles[state.player1Color]])}
+                >
+                    {state.player1.length}
+                </span>
+                -
+                <span
+                    className={clsx([styles.score, styles[state.player2Color]])}
+                >
+                    {state.player2.length}
+                </span>
+            </div>
             <Board
                 board={state.board}
                 update={update}
                 disabled={disabled}
                 state={state}
             />
-            <div>
+            <div style={{ marginTop: '20px' }}>
                 <button
                     style={{ width: '50px', height: '50px' }}
                     onClick={() =>
@@ -134,9 +121,13 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                             style={{
                                 width: '50px',
                                 height: '50px',
-                                backgroundColor: colors[c],
-                                opacity: disabled.includes(c) ? 0.5 : 1,
                             }}
+                            className={clsx([
+                                styles[c],
+                                disabled.includes(c)
+                                    ? styles.disabled
+                                    : styles.enabled,
+                            ])}
                             disabled={disabled.includes(c)}
                             key={c}
                             onClick={() =>
@@ -147,7 +138,6 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                         </button>
                     );
                 })}
-                <pre>{JSON.stringify(compute(strength, state), null, 2)}</pre>
             </div>
         </div>
     );

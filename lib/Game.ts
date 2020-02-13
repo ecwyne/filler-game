@@ -22,25 +22,27 @@ export const colors: Record<ColorKey, Color> = {
     g: 'green',
 };
 
-export const columns = 3;
-export const rows = 3;
+export const columns = 8;
+export const rows = 7;
 
 export class Game {
     constructor(public state: GameState) {}
 
     playTurn = (c: ColorKey) => {
-        const state = { ...this.state };
-        const { currentPlayer: p } = this.state;
+        const state = JSON.parse(JSON.stringify(this.state)) as GameState;
+        const { currentPlayer: p } = state;
         state.lastPlay = c;
-        state[`player${p}Color` as 'player1Color'] = c;
+        state[p === 1 ? 'player1Color' : 'player2Color'] = c;
         state.currentPlayer = p === 1 ? 2 : 1;
 
-        const set = new Set(state[`player${p}` as 'player1']);
+        const set = new Set(state[p === 1 ? 'player1' : 'player2']);
+        // console.log(set);
         set.forEach(n => this.neighborsOfColor(n, c).forEach(n => set.add(n)));
+        // console.log(set);
         set.forEach(n => {
             state.board = this.setCharAt(state.board, n, c);
         });
-        state[`player${p}` as 'player1'] = Array.from(set);
+        state[p === 1 ? 'player1' : 'player2'] = Array.from(set);
         return state;
     };
 
@@ -51,6 +53,7 @@ export class Game {
         if (board[i + columns] === c) arr.push(i + columns);
         if (i % columns !== 0 && board[i - 1] === c) arr.push(i - 1);
         if (i % columns !== columns - 1 && board[i + 1] === c) arr.push(i + 1);
+        // console.log('neighbors', i, arr);
         return arr;
     };
 

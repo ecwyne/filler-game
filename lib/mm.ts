@@ -35,6 +35,7 @@ function mm<N>({
     let best = { value: initBestValue, node };
 
     const nodes = generate(node);
+    // console.log({ nodes });
     for (let i = 0; i < nodes.length; i++) {
         const child = nodes[i];
         const { value: currentValue } = mm({
@@ -47,6 +48,7 @@ function mm<N>({
             generate,
             isTerminal,
         });
+        // console.log(i, max, (child as any).board, currentValue);
 
         const isMaxAndBestMax = max && currentValue > best.value;
         const isMinAndBestMin = !max && currentValue < best.value;
@@ -62,10 +64,10 @@ function mm<N>({
             beta = Math.min(beta, currentValue);
         }
 
-        const prune = alpha >= beta;
-        if (prune) {
-            break;
-        }
+        // const prune = alpha >= beta;
+        // if (prune) {
+        //     break;
+        // }
     }
 
     return best;
