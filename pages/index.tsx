@@ -66,7 +66,7 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                 <option value={4}>AI Strength: 4</option>
                 <option value={6}>AI Strength: 6</option>
                 <option value={8}>AI Strength: 8</option>
-                <option value={10}>AI Strength: 10</option>
+                <option value={10}>AI Strength: 10 (slow)</option>
             </select>
             {/* 
             
