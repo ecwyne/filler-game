@@ -66,11 +66,7 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                 <option value={6}>AI Strength: 6</option>
                 <option value={8}>AI Strength: 8</option>
             </select>
-            {/* <input
-                type="number"
-                value={strength}
-                onChange={e => setStrength(Number(e.target.value))}
-            />
+            {/* 
             
             <textarea
                 rows={5}
@@ -102,7 +98,7 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                 disabled={disabled}
                 state={state}
             />
-            <div style={{ marginTop: '20px' }}>
+            <div className={styles.spaced}>
                 <button
                     style={{ width: '50px', height: '50px' }}
                     onClick={() =>
@@ -138,6 +134,14 @@ const Index: NextPage<{ initialState: GameState }> = ({ initialState }) => {
                         </button>
                     );
                 })}
+            </div>
+            <div className={styles.spaced}>
+                <button
+                    onClick={() => location.reload()}
+                    style={{ fontSize: '20px', borderRadius: '10%' }}
+                >
+                    Shuffle
+                </button>
             </div>
         </div>
     );

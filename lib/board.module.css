@@ -37,6 +37,10 @@
     /* opacity: 0.4; */
 }
 
+.spaced {
+    margin-top: 20px;
+}
+
 .r {
     background-color: red;
 }
