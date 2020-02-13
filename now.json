@@ -1,0 +1,12 @@
+{
+    "name": "filler-game",
+    "version": 2,
+    "alias": ["filler-game.now.sh"],
+    "regions": ["sfo1", "iad1"],
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@now/next"
+        }
+    ]
+}
